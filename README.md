@@ -1,35 +1,89 @@
-# SupplyPulse
+# SupplyPulse — Inventory Control Tower
 
-### Inventory Control Tower
+SupplyPulse is a business-focused inventory analytics portfolio project built as an end-to-end workflow:
 
-**[Open Live Dashboard ↗](https://harsha-supplypulse.streamlit.app)**
+**Excel → MySQL/SQL → Python (NumPy + Pandas) → Forecasting → Streamlit dashboard**
 
-Built around **500 SKUs and 182,500 daily inventory/sales observations** to demonstrate inventory planning at portfolio scale.
+## Business problem
 
-## Key capabilities
+Inventory teams need to balance three competing outcomes:
 
-- ABC segmentation using trailing revenue proxy
-- Service-level driven reorder-point logic
-- Stockout revenue-risk and overstock working-capital views
-- 90-day demand history and 30-day forecast drill-down
-- Replenishment workbench with downloadable order plan
-- Category filters and portfolio-level KPIs
+1. Maintain service levels and avoid stockouts.
+2. Avoid excess inventory and tied-up working capital.
+3. Prioritize replenishment decisions using demand and lead-time signals.
 
-## Reorder logic
+## What this project demonstrates
 
-`reorder point = forecast demand × lead time + safety stock`
+- Excel-based operational analysis and KPI design
+- MySQL schema, cleaning views, CTEs and window functions
+- Python data cleaning with Pandas
+- Vectorized numerical calculations with NumPy
+- ABC inventory classification
+- Reorder-point and safety-stock logic
+- 30-day demand forecasting
+- Working-capital and revenue-at-risk analysis
+- Executive Streamlit dashboard with drill-downs and downloadable plans
+- Unit-tested analytical pipeline
 
-`safety stock = z(service level) × demand variability × √lead time`
+## Project structure
 
-Default service level is 95%.
+~~~text
+SupplyPulse/
+├── app.py
+├── BUSINESS_REQUIREMENTS.md
+├── DATA_DICTIONARY.md
+├── data/
+│   └── generate_raw_data.py
+├── dashboard/
+│   └── app.py
+├── excel/
+│   └── README.md
+├── sql/
+│   ├── 01_schema.sql
+│   ├── 02_cleaning.sql
+│   ├── 03_analytics.sql
+│   ├── 04_business_kpis.sql
+│   └── 05_load_data.sql
+├── src/
+│   ├── analytics.py
+│   ├── cleaning.py
+│   ├── data_generator.py
+│   └── forecast.py
+├── tests/
+│   └── test_pipeline.py
+├── requirements.txt
+└── requirements-dev.txt
+~~~
 
 ## Data disclosure
 
-Synthetic data only. The dashboard is a planning demonstration, not a replacement for an enterprise WMS/ERP replenishment engine.
+All data is synthetic and generated deterministically from src/data_generator.py. No real company, customer, supplier or employee data is used.
 
 ## Run locally
 
-```bash
+~~~bash
 pip install -r requirements.txt
+python data/generate_raw_data.py
 streamlit run app.py
-```
+~~~
+
+## Run tests
+
+~~~bash
+pip install -r requirements-dev.txt
+pytest -q
+~~~
+
+## Replenishment logic
+
+~~~text
+Reorder Point = Forecast Demand × Lead Time + Safety Stock
+Safety Stock = z(service level) × Demand Variability × √Lead Time
+Suggested Order = max(0, Reorder Point − On Hand)
+~~~
+
+The dashboard uses a 95% default service level and lets the analyst switch between 90%, 95% and 99% sensitivity scenarios.
+
+## Excel deliverable
+
+A polished SupplyPulse_Analysis.xlsx workbook is provided alongside the repository. It contains a representative 120-SKU × 60-day sample with data-quality checks, formula-driven SKU analysis, category analysis and an executive dashboard.
